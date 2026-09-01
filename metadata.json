@@ -1,0 +1,6 @@
+{
+  "name": "Luma Store",
+  "description": "Minimalist e-commerce platform with Firebase Firestore persistence, Google & Email authentication, real-time live customer & seller chat, stock management, and WhatsApp ordering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

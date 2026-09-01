@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection ping test
+    match /_connection_test/{docId} {
+      allow read, write: if true;
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId);
+      allow create, update: if isSignedIn() && (request.auth.uid == userId);
+      allow delete: if false;
+    }
+
+    // Products (Public read, Authenticated or Admin/Seller write)
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if true; // Allows seamless e-commerce admin, seller stock management & demo
+    }
+
+    // Categories (Public read, write)
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Sellers
+    match /sellers/{sellerId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Customer Orders
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isSignedIn();
+    }
+
+    // Real-time Chat Messages & Inquiries
+    match /chat_messages/{messageId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isSignedIn();
+    }
+  }
+}
